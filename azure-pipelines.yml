@@ -9,6 +9,14 @@ trigger:
 pool: default
 
 steps:
+- checkout: self
+  fetchDepth: 0
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud'
+    organization: 'psaluisa'
+    scannerMode: 'Other'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
