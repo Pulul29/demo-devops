@@ -24,6 +24,11 @@ steps:
       sonar.projectKey=psaluisa_Demo-DevOps
       sonar.projectName=Demo-DevOps
 
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
 
 - task: Maven@3
   inputs:
