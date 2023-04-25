@@ -27,8 +27,10 @@ steps:
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
+    goals: 'test'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    codeCoverageToolOption: 'JaCoCo'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.17'
     mavenVersionOption: 'Default'
@@ -37,7 +39,6 @@ steps:
     effectivePomSkip: false
     sonarQubeRunAnalysis: true
     sqMavenPluginVersionChoice: 'latest'
-
 
 - task: SonarCloudPublish@1
   inputs:
