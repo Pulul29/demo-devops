@@ -29,6 +29,7 @@ steps:
     mavenPomFile: 'pom.xml'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    codeCoverageToolOption: 'JaCoCo'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.17'
     mavenVersionOption: 'Default'
@@ -50,3 +51,4 @@ steps:
 - task: PublishCodeCoverageResults@2
   inputs:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)/src/main/java/'
