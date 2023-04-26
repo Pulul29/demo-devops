@@ -15,7 +15,6 @@ stages:
       steps:
       - checkout: self
         fetchDepth: 0
-
       - task: SonarCloudPrepare@1
         displayName: 'Preparar Configuración Sonar Cloud'
         inputs:
@@ -25,7 +24,6 @@ stages:
           extraProperties: |
             sonar.projectKey=psaluisa_Demo-DevOps
             sonar.projectName=Demo-DevOps
-
       - task: Maven@3
         displayName: 'Build de Aplicación (Test y Cobertura)'
         inputs:
@@ -42,7 +40,6 @@ stages:
           effectivePomSkip: false
           sonarQubeRunAnalysis: true
           sqMavenPluginVersionChoice: 'latest'
-
       - task: SonarCloudPublish@1
         displayName: 'Publicar Resultados Análisi Sonar Cloud'
         inputs:
@@ -56,6 +53,11 @@ stages:
       - task: Docker@2
         inputs:
           containerRegistry: 'Docker Hub'
+          command: 'login'
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'Docker Hub'
           repository: 'demo-devops'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
+          arguments: 'port=9000'
