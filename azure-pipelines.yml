@@ -6,46 +6,51 @@
 trigger:
 - master
 
-pool: default
+stages:
+- stage: Build
+  pool: default
+  jobs:
+    - job:
+      displayName: 'Generar JAR Aplicación'
+      steps:
+      - checkout: self
+        fetchDepth: 0
 
-steps:
-- checkout: self
-  fetchDepth: 0
+      - task: SonarCloudPrepare@1
+        displayName: 'Preparar Configuración Sonar Cloud'
+        inputs:
+          SonarCloud: 'SonarCloud'
+          organization: 'psaluisa'
+          scannerMode: 'Other'
+          extraProperties: |
+            sonar.projectKey=psaluisa_Demo-DevOps
+            sonar.projectName=Demo-DevOps
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'SonarCloud'
-    organization: 'psaluisa'
-    scannerMode: 'Other'
-    extraProperties: |
-      # Additional properties that will be passed to the scanner,
-      # Put one key=value per line, example:
-      # sonar.exclusions=**/*.bin
-      sonar.projectKey=psaluisa_Demo-DevOps
-      sonar.projectName=Demo-DevOps
+      - task: Maven@3
+        displayName: 'Build de Aplicación (Test y Cobertura)'
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'test'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          codeCoverageToolOption: 'JaCoCo'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.17'
+          mavenVersionOption: 'Default'
+          mavenOptions: '-Xmx3072m'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: true
+          sqMavenPluginVersionChoice: 'latest'
 
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'test'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    codeCoverageToolOption: 'JaCoCo'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.17'
-    mavenVersionOption: 'Default'
-    mavenOptions: '-Xmx3072m'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: true
-    sqMavenPluginVersionChoice: 'latest'
+      - task: SonarCloudPublish@1
+        displayName: 'Publicar Resultados Análisi Sonar Cloud'
+        inputs:
+          pollingTimeoutSec: '300'
 
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '300'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.Repository.LocalPath)\target\demo-0.0.1.jar'
-    ArtifactName: 'demo-0.0.1.jar'
-    publishLocation: 'Container'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publicar JAR Aplicación'
+        inputs:
+          PathtoPublish: '$(Build.Repository.LocalPath)\target\demo-0.0.1.jar'
+          ArtifactName: 'demo-0.0.1.jar'
+          publishLocation: 'Container'
