@@ -47,10 +47,13 @@ stages:
         displayName: 'Publicar Resultados Análisi Sonar Cloud'
         inputs:
           pollingTimeoutSec: '300'
-
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publicar JAR Aplicación'
+    
+    - job:
+      displayName: 'Generar Imagen APP'
+      steps:
+      - task: Docker@2
         inputs:
-          PathtoPublish: '$(Build.Repository.LocalPath)\target\demo-0.0.1.jar'
-          ArtifactName: 'demo-0.0.1.jar'
-          publishLocation: 'Container'
+          containerRegistry: 'Docker Hub'
+          repository: 'demo-devops'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
