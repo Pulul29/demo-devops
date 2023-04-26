@@ -10,7 +10,7 @@ stages:
 - stage: Build
   pool: default
   jobs:
-    - job: Build-Jar
+    - job: Build_Jar
       displayName: 'Generar JAR Aplicación'
       steps:
       - checkout: self
@@ -48,9 +48,9 @@ stages:
         inputs:
           pollingTimeoutSec: '300'
     
-    - job: Build-Image
+    - job: Build_Image
       displayName: 'Generar Imagen APP'
-      dependsOn: Build-Jar
+      dependsOn: Build_Jar
       steps:
       - task: Docker@2
         inputs:
