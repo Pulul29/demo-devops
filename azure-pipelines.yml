@@ -56,3 +56,4 @@ stages:
           repository: 'paulngt2/demo-devops'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
+          arguments: 'port=9000'
