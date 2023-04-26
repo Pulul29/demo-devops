@@ -53,11 +53,6 @@ stages:
       - task: Docker@2
         inputs:
           containerRegistry: 'Docker Hub'
-          command: 'login'
-      - task: Docker@2
-        inputs:
-          containerRegistry: 'Docker Hub'
-          repository: 'demo-devops'
+          repository: 'paulngt2/demo-devops'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
-          arguments: 'port=9000'
