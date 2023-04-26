@@ -52,6 +52,7 @@ stages:
       displayName: 'Generar Imagen APP'
       dependsOn: Build_Jar
       steps:
+      - checkout: none
       - task: Docker@2
         inputs:
           containerRegistry: 'Docker Hub'
