@@ -54,6 +54,11 @@ stages:
         inputs:
           containerRegistry: 'Docker Hub'
           repository: 'paulngt2/demo-devops'
-          command: 'buildAndPush'
+          command: 'build'
           Dockerfile: '**/Dockerfile'
-          arguments: 'port=9000'
+          arguments: '--build-arg port=9000'      
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'Docker Hub'
+          repository: 'paulngt2/demo-devops'
+          command: 'push'
