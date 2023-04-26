@@ -43,3 +43,9 @@ steps:
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)\target\demo-0.0.1.jar'
+    ArtifactName: 'demo-0.0.1.jar'
+    publishLocation: 'Container'
