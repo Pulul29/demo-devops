@@ -1,24 +1,36 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+# Definición del pipeline de integración continua y entrega continua para el servicio demo-devops desarrollado en SpringBoot
+#
+# Autor: Paúl Aluisa <psaluisa@outlook.com>
+# Versión: 1.0
+# Fecha de creación: 27 de abril de 2023
+#
 
+# Declaración del trigger para el pipeline
 trigger:
 - master
 
+# Declaración de variables para el pipeline
 variables:
-  - name: port
-    value: 9000 
+  sonar.projectKey: 'psaluisa_Demo-DevOps' # Key del Proyecto de Sonar Cloud para revisión de código estático
+  sonar.projectName: 'Demo-DevOps' # Nombre del Proyecto de Sonar Cloud para revisión de código estático
+  docker.repository: 'paulngt2/demo-devops' # Nombre del repositorio en el que se subirá la imagen generada
+  deployment.file: '03-deployment.yaml' # Archivo de creación del deployment en kubernetes para la inclusión del tag de imagen generado
+  deployment.folder: 'deployment' # Carpeta de archivos yaml con los recursos que se desplegaran en el cluster gke  
+  kubernetes.namespace: 'demo-devops' # Plataforma de compilación     
 
 stages:
+  # Stage de Build para la entrega de la imagen de la aplicación  
 - stage: Build
-  pool: default
+  pool: default # Pool de recursos para ejecución, contiene el recurso on-Premise para la ejecución de comandos
   jobs:
+    # Job para compilar, pruebas unitarias, analis de código estático, cobertura de código y generación de .jar 
     - job: Build_Jar
       displayName: 'Generar JAR Aplicación'
       steps:
+        # Task de checkout del código fuente desde el repositorio
       - checkout: self
         fetchDepth: 0
+        # Task para configurar el análisis de código estático con sonar cloud 
       - task: SonarCloudPrepare@1
         displayName: 'Preparar Configuración Sonar Cloud'
         inputs:
@@ -26,16 +38,17 @@ stages:
           organization: 'psaluisa'
           scannerMode: 'Other'
           extraProperties: |
-            sonar.projectKey=psaluisa_Demo-DevOps
-            sonar.projectName=Demo-DevOps
+            sonar.projectKey=$(sonar.projectKey)
+            sonar.projectName=$(sonar.projectName)
+        # Task de ejecución de comandos maven en el que se compila, pruebas unitarias y se ejecuta análisis de código.
       - task: Maven@3
         displayName: 'Build de Aplicación (Test y Cobertura)'
         inputs:
           mavenPomFile: 'pom.xml'
-          goals: 'test'
+          goals: 'test' # Goal definido para compilar, ejecutar pruebas unitarias y generar .jar
           publishJUnitResults: true
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
-          codeCoverageToolOption: 'JaCoCo'
+          codeCoverageToolOption: 'JaCoCo'  # Definición de herramienta para reporte de cobertura de código
           javaHomeOption: 'JDKVersion'
           jdkVersionOption: '1.17'
           mavenVersionOption: 'Default'
@@ -44,53 +57,63 @@ stages:
           effectivePomSkip: false
           sonarQubeRunAnalysis: true
           sqMavenPluginVersionChoice: 'latest'
+        
+        # Task para la publicación de resultados del análisis de sonar cloud
       - task: SonarCloudPublish@1
         displayName: 'Publicar Resultados Análisi Sonar Cloud'
         inputs:
           pollingTimeoutSec: '300'
     
+    # Job para generar y publicar la imagen de docker con el .jar generado
     - job: Build_Image
       displayName: 'Generar Imagen APP'
       dependsOn: Build_Jar
+      condition: succeeded() # Se ejecuta este trabajo solo si el trabajo de compilación es exitoso
       steps:
+        # Task para evitar hacer nuevamente checkout del código
       - checkout: none
+        # Task para build de la imagen docker en base al Dockerfile del repo
       - task: Docker@2
         displayName: 'Build Imagen Docker'
         inputs:
           containerRegistry: 'Docker Hub'
-          repository: 'paulngt2/demo-devops'
+          repository: '$(docker.repository)'
           command: 'build'
           Dockerfile: '**/Dockerfile'
           tags: $(Build.BuildId)
-          arguments: '--build-arg port=$(port)'      
+
+        # Task para subir la imagen al repositorio de Doker Hub
       - task: Docker@2
         displayName: 'Push Imagen Docker'
         inputs:
           containerRegistry: 'Docker Hub'
-          repository: 'paulngt2/demo-devops'
+          repository: '$(docker.repository)'
           command: 'push'
           tags: $(Build.BuildId)
 
+        # Task para ejecutar el comando que modifique el archivo que debe contener el nuevo tag de la imagen generada.
       - task: PowerShell@2
         displayName: 'Definir Tag Imagen en Deployment'
         inputs:
           targetType: 'inline'
-          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./deployment/03-deployment.yaml'
-
+          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./$(deployment.folder)/$(deployment.file)'
+  # Stage de Deploy en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la generación de la nueva imagen
 - stage: Deploy
   pool: default
   jobs:
     - job: Deploy_GKE
       displayName: 'Desplegar App en Cluster GKE'
       steps:
+        # Task para evitar hacer nuevamente checkout del código
       - checkout: none   
+        # Task para la ejecutar comando kubernetes y crear o actualizar los recursos en el cluster en base a los archivos yaml de la carpeta de deployment
       - task: Kubernetes@1
         displayName: 'Crear Pods'
         inputs:
           connectionType: 'Kubernetes Service Connection'
           kubernetesServiceEndpoint: 'GKE'
-          namespace: 'demo-devops'
+          namespace: '$(kubernetes.namespace)' # Establece el namespace de los recursos
           command: 'apply'
           useConfigurationFile: true
-          configuration: './deployment/.'
+          configuration: './$(deployment.folder)/.' # Establece la carpeta donde se encuentran los archivos yaml de despliegue. 
           secretType: 'generic'
