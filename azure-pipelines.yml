@@ -55,6 +55,7 @@ stages:
       steps:
       - checkout: none
       - task: Docker@2
+        displayName: 'Build Imagen Docker'
         inputs:
           containerRegistry: 'Docker Hub'
           repository: 'paulngt2/demo-devops'
@@ -65,6 +66,7 @@ stages:
             latest
           arguments: '--build-arg port=$(port)'      
       - task: Docker@2
+        displayName: 'Push Imagen Docker'
         inputs:
           containerRegistry: 'Docker Hub'
           repository: 'paulngt2/demo-devops'
@@ -81,6 +83,18 @@ stages:
       steps:
       - checkout: none
       - task: Kubernetes@1
+        displayName: 'Eliminar Pods'
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceEndpoint: 'GKE'
+          namespace: 'demo-devops'
+          command: 'delete'
+          useConfigurationFile: true
+          configuration: './deployment/.'
+          secretType: 'generic'
+
+      - task: Kubernetes@1
+        displayName: 'Crear Pods'
         inputs:
           connectionType: 'Kubernetes Service Connection'
           kubernetesServiceEndpoint: 'GKE'
