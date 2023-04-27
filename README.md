@@ -162,21 +162,39 @@ En la etapa de despliegue a entorno de producción, se implementa la aplicación
 
 ## **Arquitectura de la aplicación**
 La aplicación se compone de un clúster de Google Kubernetes Engine (GKE) en el que se despliegan los siguientes recursos para el funcionamiento de la aplicación:
-Secret: Crea el secret en el que se guarda el usuario y contraseña de la conexión a base de datos del servicio.
-Deployment: Crea el deployment para la creación de los pods, en el mismo se especifica la imagen generada en el pipeline y el respectivo tag, además de asociar el secret para tomar el usuario y contraseña de la base de datos y colocarlos como variables de entorno en los contenedores. Asocia el puerto por el que se expondrá la aplicación en los pods.
-HorizontalPodAutoscaler: Se asocia al deployment para darle la característica de auto escalado horizontal según el consumo de cpu de los pods. Se establece el umbral para auto escalad y el número mínimo y máximo de replicas.
-Service: Agrupa los pods identificados con el label app: demo-devops y expone una ip y puerto para acceder a los mismos.
-Ingress: Se asocia al servicio y crea una interfaz de red para acceder al mismo de forma externa.
-BackendConfig: Se asocia al servicio y se utiliza para configurar la revisión de la salud de un pod (healthcheck) y si se puede habilitar o no para que se acceda a través del Ingress. Se usa para configurar adecuadamente la verificación de estado.
+
+## Secret: 
+Crea el secret en el que se guarda el usuario y contraseña de la conexión a base de datos del servicio.
+
+## Deployment: 
+Crea el deployment para la creación de los pods, en el mismo se especifica la imagen generada en el pipeline y el respectivo tag, además de asociar el secret para tomar el usuario y contraseña de la base de datos y colocarlos como variables de entorno en los contenedores. Asocia el puerto por el que se expondrá la aplicación en los pods.
+
+## HorizontalPodAutoscaler: 
+Se asocia al deployment para darle la característica de auto escalado horizontal según el consumo de cpu de los pods. Se establece el umbral para auto escalad y el número mínimo y máximo de replicas.
+
+## Service: 
+Agrupa los pods identificados con el label app: demo-devops y expone una ip y puerto para acceder a los mismos.
+
+## Ingress: 
+Se asocia al servicio y crea una interfaz de red para acceder al mismo de forma externa.
+
+## BackendConfig: 
+Se asocia al servicio y se utiliza para configurar la revisión de la salud de un pod (healthcheck) y si se puede habilitar o no para que se acceda a través del Ingress. Se usa para configurar adecuadamente la verificación de estado.
+
 
 ## **Dependencias del Pipeline**
 El pipeline depende de las siguientes herramientas y servicios:
 -	Azure DevOps
 -	Recurso de cómputo on-Premise con las siguientes características:
+
 •	Java JDK 17
+
 •	Maven
+
 •	Docker
+
 •	Google Cloud SDK Shell 
+
 -	Cluster Google Kubernetes Engine (GKE)
 -	Cuenta Sonar Cloud
 -	Cuenta Docker Hub
