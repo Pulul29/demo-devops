@@ -81,7 +81,11 @@ stages:
     - job: Deploy_GKE
       displayName: 'Desplegar App en Cluster GKE'
       steps:
-      - checkout: none      
+      - checkout: none
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./deployment/03-deployment.yaml'   
       - task: Kubernetes@1
         displayName: 'Crear Pods'
         inputs:
@@ -92,8 +96,3 @@ stages:
           useConfigurationFile: true
           configuration: './deployment/.'
           secretType: 'generic'
-      
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: 'kubectl rollout restart deployment/demo-devops -n demo-devops'
