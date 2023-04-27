@@ -29,4 +29,14 @@ public class UserControllerTest {
 				)
 		.andExpect(status().isOk());
 	}
+
+	@Test
+	@DisplayName("GET: " + relativePath + "/health: ✔ Status code 200")
+	void getHealth_statusOk() throws Exception {
+		mockMvc.perform(
+				get(relativePath)
+				.characterEncoding("utf-8")
+				)
+		.andExpect(status().isOk());
+	}
 }
