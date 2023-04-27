@@ -61,9 +61,7 @@ stages:
           repository: 'paulngt2/demo-devops'
           command: 'build'
           Dockerfile: '**/Dockerfile'
-          tags: |
-            $(Build.BuildId)
-            latest
+          tags: $(Build.BuildId)
           arguments: '--build-arg port=$(port)'      
       - task: Docker@2
         displayName: 'Push Imagen Docker'
@@ -71,9 +69,13 @@ stages:
           containerRegistry: 'Docker Hub'
           repository: 'paulngt2/demo-devops'
           command: 'push'
-          tags: |
-            $(Build.BuildId)
-            latest
+          tags: $(Build.BuildId)
+
+      - task: PowerShell@2
+        displayName: 'Definir Tag Imagen en Deployment'
+        inputs:
+          targetType: 'inline'
+          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./deployment/03-deployment.yaml'
 
 - stage: Deploy
   pool: default
@@ -81,11 +83,7 @@ stages:
     - job: Deploy_GKE
       displayName: 'Desplegar App en Cluster GKE'
       steps:
-      - checkout: none
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./deployment/03-deployment.yaml'   
+      - checkout: none   
       - task: Kubernetes@1
         displayName: 'Crear Pods'
         inputs:
