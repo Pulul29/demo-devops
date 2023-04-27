@@ -62,3 +62,17 @@ stages:
           containerRegistry: 'Docker Hub'
           repository: 'paulngt2/demo-devops'
           command: 'push'
+  - stage: Deploy
+    jobs:
+      - job: Deploy_GKE
+        displayName: 'Desplegar App en Cluster GKE'
+        steps:
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'GKE'
+            namespace: 'demo-devops'
+            command: 'apply'
+            useConfigurationFile: true
+            configuration: './deployment/.'
+            secretType: 'generic' 
