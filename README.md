@@ -146,7 +146,7 @@ El pipeline usará como apoyo un PC Windows con el agente on-premise de Azure De
 ## **Estructura del Pipeline**
 El pipeline consta de tres etapas: Build (Pruebas Unitarias, Validación Estática de Código, Cobertura de Código, Construcción de Imagen Docker), Despliegue a Entorno de Pruebas (GKE) y Despliegue a Entorno de Producción (GKE).
 
-![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/_git/Demo-DevOps?path=/CI_CD%20pipeline.jpeg)
+![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/52f9ef7f-f41b-4412-903a-0ad43ae74023/_apis/git/repositories/b590f351-92dd-4678-a787-1af5b22935f0/items?path=/CI_CD%20pipeline.jpeg&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=2&versionDescriptor%5Bversion%5D=dfe13c2dba16ff6e5064b30e4c46480e5aef9f41&resolveLfs=true&%24format=octetStream&api-version=5.0)
 
 ### **Etapa 1: Build**
 La etapa de construcción se encarga de compilar y empaquetar la aplicación. Se utiliza el task Maven@3 de azure pipelines que ejecutará la compilación, pruebas unitarias y empaquetado en .jar utilizando el goal ‘test’ con Maven.  
