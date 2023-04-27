@@ -44,4 +44,10 @@ public class UserController {
 	public UserDto create(@Valid @RequestBody UserDto userDto){
 		return userService.save(userDto);
 	}
+	
+	@GetMapping("/health")
+	@ResponseStatus(HttpStatus.OK)
+	public HttpStatus health(){
+		return HttpStatus.OK;
+	}
 }
