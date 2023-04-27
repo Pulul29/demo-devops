@@ -48,6 +48,6 @@ public class UserController {
 	@GetMapping("/health")
 	@ResponseStatus(HttpStatus.OK)
 	public String health(){
-		return "Healthy";
+		return "OK";
 	}
 }
