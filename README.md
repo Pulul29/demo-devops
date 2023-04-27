@@ -137,6 +137,8 @@ If the response is unsuccessful, we will receive status 400 and the following me
 }
 ```
 --------------------------------------------------------------------------------------------------------
+# Diseño de Pipeline: Demo Devops Java
+
 # **Descripción general**
 Este pipeline tiene como objetivo construir, probar y entregar el servicio Demo Devops Java. El servicio provee endpoints para consulta y creación de usuarios. Se desplegará en un cluster de Google Kubernetes Engine (GKE) a través de un pipeline de Azure DevOps.
 El pipeline usará como apoyo un PC Windows con el agente on-premise de Azure DevOps para la ejecución de los task requeridos.
@@ -144,7 +146,7 @@ El pipeline usará como apoyo un PC Windows con el agente on-premise de Azure De
 ## **Estructura del Pipeline**
 El pipeline consta de tres etapas: Build (Pruebas Unitarias, Validación Estática de Código, Cobertura de Código, Construcción de Imagen Docker), Despliegue a Entorno de Pruebas (GKE) y Despliegue a Entorno de Producción (GKE).
 
-![CI_CD pipeline.jpeg](/.attachments/CI_CD%20pipeline-4bf303a4-c295-499a-a1b8-926a99c23c7a.jpeg)
+![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/_git/Demo-DevOps?path=/CI_CD%20pipeline.jpeg)
 
 ### **Etapa 1: Build**
 La etapa de construcción se encarga de compilar y empaquetar la aplicación. Se utiliza el task Maven@3 de azure pipelines que ejecutará la compilación, pruebas unitarias y empaquetado en .jar utilizando el goal ‘test’ con Maven.  
