@@ -161,6 +161,9 @@ En la etapa de despliegue a entorno de pruebas, se implementa la aplicación en 
 En la etapa de despliegue a entorno de producción, se implementa la aplicación en un cluster de kubernetes (GKE) con un namespace separado para el entorno de producción. En el despliegue se realiza la creación de los secrets, deployment, horizontal auto scaler, service, ingress y backend config necesarios para el levantamiento del servicio en el cluster GKE en el respectivo namespace para el entorno de producción.
 
 ## **Arquitectura de la aplicación**
+
+![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/52f9ef7f-f41b-4412-903a-0ad43ae74023/_apis/git/repositories/b590f351-92dd-4678-a787-1af5b22935f0/items?path=/Diagrama%20GKE.jpeg&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=azure-pipelines&resolveLfs=true&%24format=octetStream&api-version=5.0)
+
 La aplicación se compone de un clúster de Google Kubernetes Engine (GKE) en el que se despliegan los siguientes recursos para el funcionamiento de la aplicación:
 
 ## Secret: 
