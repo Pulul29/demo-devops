@@ -96,6 +96,7 @@ stages:
   # Stage de Deploy Test en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la generación de la nueva imagen
 - stage: Deploy_Test
   pool: default
+  displayName: 'Despliegue a Entorno de Pruebas'
   jobs:
     - job: Deploy_GKE_Test
       displayName: 'Desplegar App en Cluster GKE'
@@ -134,6 +135,7 @@ stages:
   # Stage de Deploy Producción en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la aprobación de la fase de Test
 - stage: Deploy_Prod
   pool: default
+  displayName: 'Despliegue a Entorno de Producción'
   jobs:
     - job: Deploy_GKE
       displayName: 'Desplegar App en Cluster GKE'
