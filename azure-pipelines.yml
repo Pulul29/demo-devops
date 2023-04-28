@@ -122,7 +122,7 @@ stages:
       # Job para Solicitar aprobación previo al paso al stage de producción
     - job: Esperar_Aprobracion
       displayName: 'Esperar Aprobación del Usuario' 
-      pool: default    
+      pool: server    
       steps: 
         - checkout: none  
         - task: ManualIntervention@8
