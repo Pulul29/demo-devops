@@ -125,7 +125,6 @@ stages:
       pool: server    
       steps: 
         - task: ManualIntervention@8
-          displayName: 'Aprobación Pruebas Funcionales'
           inputs:
             instructions: 'Por favor verificar el despliegue y autorizar el paso a producción'
             emailRecipients: 'psaluisa@outlook.com'
