@@ -97,7 +97,7 @@ stages:
 - stage: Deploy_Test
   pool: default
   jobs:
-    - job: Deploy_GKE
+    - job: Deploy_GKE_Test
       displayName: 'Desplegar App en Cluster GKE'
       steps:
         # Task para evitar hacer nuevamente checkout del código
@@ -121,13 +121,15 @@ stages:
           secretType: 'generic'
       # Job para Solicitar aprobación previo al paso al stage de producción
     - job: Esperar_Aprobracion
-      displayName: 'Esperar Aprobación del Usuario' 
+      displayName: 'Esperar Aprobación del Usuario'
+      dependsOn: Deploy_GKE_Test
+      condition: succeeded() # Se ejecuta este trabajo solo si el trabajo de compilación es exitoso 
       pool: server    
       steps: 
-        - task: ManualIntervention@8
+        - task: ManualValidation@0
           inputs:
+            notifyUsers: 'psaluisa@outlook.com'
             instructions: 'Por favor verificar el despliegue y autorizar el paso a producción'
-            emailRecipients: 'psaluisa@outlook.com'
 
   # Stage de Deploy Producción en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la aprobación de la fase de Test
 - stage: Deploy_Prod
