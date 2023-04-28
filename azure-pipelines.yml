@@ -124,7 +124,6 @@ stages:
       displayName: 'Esperar Aprobación del Usuario' 
       pool: server    
       steps: 
-        - checkout: none  
         - task: ManualIntervention@8
           displayName: 'Aprobación Pruebas Funcionales'
           inputs:
