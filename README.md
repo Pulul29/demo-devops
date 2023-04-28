@@ -146,7 +146,7 @@ El pipeline usará como apoyo un PC Windows con el agente on-premise de Azure De
 ## **Estructura del Pipeline**
 El pipeline consta de tres etapas: Build (Pruebas Unitarias, Validación Estática de Código, Cobertura de Código, Construcción de Imagen Docker), Despliegue a Entorno de Pruebas (GKE) y Despliegue a Entorno de Producción (GKE).
 
-![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/52f9ef7f-f41b-4412-903a-0ad43ae74023/_apis/git/repositories/b590f351-92dd-4678-a787-1af5b22935f0/items?path=/CI_CD%20pipeline.jpeg&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=2&versionDescriptor%5Bversion%5D=dfe13c2dba16ff6e5064b30e4c46480e5aef9f41&resolveLfs=true&%24format=octetStream&api-version=5.0)
+![CI_CD pipeline.jpeg](CI_CD pipeline.jpeg)
 
 ### **Etapa 1: Build**
 La etapa de construcción se encarga de compilar y empaquetar la aplicación. Se utiliza el task Maven@3 de azure pipelines que ejecutará la compilación, pruebas unitarias y empaquetado en .jar utilizando el goal ‘test’ con Maven.  
@@ -162,7 +162,7 @@ En la etapa de despliegue a entorno de producción, se implementa la aplicación
 
 ## **Arquitectura de la aplicación**
 
-![CI_CD pipeline.jpeg](https://dev.azure.com/psaluisa/52f9ef7f-f41b-4412-903a-0ad43ae74023/_apis/git/repositories/b590f351-92dd-4678-a787-1af5b22935f0/items?path=/Diagrama%20GKE.jpeg&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=azure-pipelines&resolveLfs=true&%24format=octetStream&api-version=5.0)
+![Diagrama_GKE.jpeg](Diagrama_GKE.jpeg)
 
 La aplicación se compone de un clúster de Google Kubernetes Engine (GKE) en el que se despliegan los siguientes recursos para el funcionamiento de la aplicación:
 
@@ -187,17 +187,12 @@ Se asocia al servicio y se utiliza para configurar la revisión de la salud de u
 
 ## **Dependencias del Pipeline**
 El pipeline depende de las siguientes herramientas y servicios:
--	Azure DevOps
--	Recurso de cómputo on-Premise con las siguientes características:
-
-•	Java JDK 17
-
-•	Maven
-
-•	Docker
-
-•	Google Cloud SDK Shell 
-
+- Azure DevOps
+- Recurso de cómputo on-Premise con las siguientes características:
+  - Java JDK 17
+  - Maven
+  - Docker
+  - Google Cloud SDK Shell 
 -	Cluster Google Kubernetes Engine (GKE)
 -	Cuenta Sonar Cloud
 -	Cuenta Docker Hub
