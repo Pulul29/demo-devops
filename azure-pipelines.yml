@@ -123,14 +123,13 @@ stages:
     - job: Esperar_Aprobracion
       displayName: 'Esperar Aprobación del Usuario' 
       pool: default    
-      timeoutInMinutes: 4320 # job times out en 3 días
       steps: 
         - checkout: none  
-        - task: ManualValidation@0
-          timeoutInMinutes: 1440 # task times out en 1 día
+        - task: ManualIntervention@8
+          displayName: 'Aprobación Pruebas Funcionales'
           inputs:
-            notifyUsers: 'psaluisa@outlook.com'
-            instructions: 'Please validate the build configuration and resume'
+            instructions: 'Por favor verificar el despliegue y autorizar el paso a producción'
+            emailRecipients: 'psaluisa@outlook.com'
 
   # Stage de Deploy Producción en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la aprobación de la fase de Test
 - stage: Deploy_Prod
