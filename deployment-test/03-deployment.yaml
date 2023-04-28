@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: demo-devops-test
+  name: demo-devops
+spec:
+  selector:
+    matchLabels:
+      app: demo-devops
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: demo-devops
+    spec:
+      containers:
+      - name: demo-devops
+        image: paulngt2/demo-devops:["tag"]
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: USERNAME_DB
+          valueFrom:
+            secretKeyRef:
+              name: demo-devops-secret
+              key: username
+        - name: PASSWORD_DB
+          valueFrom:
+            secretKeyRef:
+              name: demo-devops-secret
+              key: password
+        ports:
+        - name: demo-devops
+          containerPort: 9000
+          protocol: TCP
+          

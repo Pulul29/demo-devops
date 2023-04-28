@@ -15,8 +15,10 @@ variables:
   sonar.projectName: 'Demo-DevOps' # Nombre del Proyecto de Sonar Cloud para revisión de código estático
   docker.repository: 'paulngt2/demo-devops' # Nombre del repositorio en el que se subirá la imagen generada
   deployment.file: '03-deployment.yaml' # Archivo de creación del deployment en kubernetes para la inclusión del tag de imagen generado
-  deployment.folder: 'deployment' # Carpeta de archivos yaml con los recursos que se desplegaran en el cluster gke  
-  kubernetes.namespace: 'demo-devops' # Plataforma de compilación     
+  deployment.folder.test: 'deployment-test' # Carpeta de archivos yaml con los recursos que se desplegaran en el cluster gke  
+  deployment.folder.prod: 'deployment' # Carpeta de archivos yaml con los recursos que se desplegaran en el cluster gke  
+  kubernetes.namespace.test: 'demo-devops-test' # Namespace del cluter kubernetes para el despliegue en el ambiente de test
+  kubernetes.namespace.prod: 'demo-devops' # Namespace del cluter kubernetes para el despliegue en el ambiente de producción    
 
 stages:
   # Stage de Build para la entrega de la imagen de la aplicación  
@@ -97,8 +99,8 @@ stages:
         inputs:
           targetType: 'inline'
           script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./$(deployment.folder)/$(deployment.file)'
-  # Stage de Deploy en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la generación de la nueva imagen
-- stage: Deploy
+  # Stage de Deploy Test en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la generación de la nueva imagen
+- stage: Deploy_Test
   pool: default
   jobs:
     - job: Deploy_GKE
@@ -112,8 +114,29 @@ stages:
         inputs:
           connectionType: 'Kubernetes Service Connection'
           kubernetesServiceEndpoint: 'GKE'
-          namespace: '$(kubernetes.namespace)' # Establece el namespace de los recursos
+          namespace: '$(kubernetes.namespace.test)' # Establece el namespace de los recursos
           command: 'apply'
           useConfigurationFile: true
-          configuration: './$(deployment.folder)/.' # Establece la carpeta donde se encuentran los archivos yaml de despliegue. 
+          configuration: './$(deployment.folder.test)/.' # Establece la carpeta donde se encuentran los archivos yaml de despliegue. 
+          secretType: 'generic'
+
+  # Stage de Deploy Producción en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la aprobación de la fase de Test
+- stage: Deploy_Prod
+  pool: default
+  jobs:
+    - job: Deploy_GKE
+      displayName: 'Desplegar App en Cluster GKE'
+      steps:
+        # Task para evitar hacer nuevamente checkout del código
+      - checkout: none   
+        # Task para la ejecutar comando kubernetes y crear o actualizar los recursos en el cluster en base a los archivos yaml de la carpeta de deployment
+      - task: Kubernetes@1
+        displayName: 'Crear Pods'
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceEndpoint: 'GKE'
+          namespace: '$(kubernetes.namespace.prod)' # Establece el namespace de los recursos
+          command: 'apply'
+          useConfigurationFile: true
+          configuration: './$(deployment.folder.prod)/.' # Establece la carpeta donde se encuentran los archivos yaml de despliegue. 
           secretType: 'generic'
