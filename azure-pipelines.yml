@@ -92,13 +92,7 @@ stages:
           repository: '$(docker.repository)'
           command: 'push'
           tags: $(Build.BuildId)
-
-        # Task para ejecutar el comando que modifique el archivo que debe contener el nuevo tag de la imagen generada.
-      - task: PowerShell@2
-        displayName: 'Definir Tag Imagen en Deployment'
-        inputs:
-          targetType: 'inline'
-          script: '(Get-Content ./deployment/03-deployment.yaml).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./$(deployment.folder)/$(deployment.file)'
+      
   # Stage de Deploy Test en el que se realiza el despliege o actualización de recursos en el cluster GKE luego de la generación de la nueva imagen
 - stage: Deploy_Test
   pool: default
@@ -107,7 +101,13 @@ stages:
       displayName: 'Desplegar App en Cluster GKE'
       steps:
         # Task para evitar hacer nuevamente checkout del código
-      - checkout: none   
+      - checkout: none
+      # Task para ejecutar el comando que modifique el archivo de deployment de kubernetes que debe contener el nuevo tag de la imagen generada.
+      - task: PowerShell@2
+        displayName: 'Definir Tag Imagen en Deployment Test'
+        inputs:
+          targetType: 'inline'
+          script: '(Get-Content ./$(deployment.folder.test)/$(deployment.file)).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./$(deployment.folder.test)/$(deployment.file)'   
         # Task para la ejecutar comando kubernetes y crear o actualizar los recursos en el cluster en base a los archivos yaml de la carpeta de deployment
       - task: Kubernetes@1
         displayName: 'Crear Pods'
@@ -128,7 +128,13 @@ stages:
       displayName: 'Desplegar App en Cluster GKE'
       steps:
         # Task para evitar hacer nuevamente checkout del código
-      - checkout: none   
+      - checkout: none
+      # Task para ejecutar el comando que modifique el archivo de deployment de kubernetes que debe contener el nuevo tag de la imagen generada.
+      - task: PowerShell@2
+        displayName: 'Definir Tag Imagen en Deployment Producción'
+        inputs:
+          targetType: 'inline'
+          script: '(Get-Content ./$(deployment.folder.prod)/$(deployment.file)).replace(''["tag"]'', ''$(Build.BuildId)'') | Set-Content ./$(deployment.folder.prod)/$(deployment.file)'
         # Task para la ejecutar comando kubernetes y crear o actualizar los recursos en el cluster en base a los archivos yaml de la carpeta de deployment
       - task: Kubernetes@1
         displayName: 'Crear Pods'
