@@ -160,6 +160,8 @@ En la etapa de despliegue a entorno de pruebas, se implementa la aplicación en 
 ### **Etapa 3: Despliegue a Entorno de Producción**
 En la etapa de despliegue a entorno de producción, se implementa la aplicación en un cluster de kubernetes (GKE) con un namespace separado para el entorno de producción. En el despliegue se realiza la creación de los secrets, deployment, horizontal auto scaler, service, ingress y backend config necesarios para el levantamiento del servicio en el cluster GKE en el respectivo namespace para el entorno de producción.
 
+![PipelineAzureDevOps.jpg](PipelineAzureDevOps.jpg)
+
 ## **Arquitectura de la aplicación**
 
 ![Diagrama_GKE.jpeg](Diagrama_GKE.jpeg)
