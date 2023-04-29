@@ -34,3 +34,6 @@ build/
 .vscode/
 ~$seño de Pipeline.docx
 ~WRL0003.tmp
+terraform-gke-keyfile.json
+terraform-project/.terraform/
+terraform-project/.terraform.lock.hcl
